@@ -23,8 +23,10 @@
 </template>
 
 <script>
+
 import TimeControls from '@/components/TimeControls'
 import Scene from './Scene'
+import { tick } from './sync'
 
 export default {
   name: 'app',
@@ -32,7 +34,7 @@ export default {
   data () {
     return {
       videoLength: 20,
-      time: 0,
+      time: -0.01,
 
       // dev only
       aspectRatio: 16/9,
@@ -53,7 +55,7 @@ export default {
       // let frame = 0
       webvfx.renderRequested.connect(t => {
         // webvfx.getImage('video').assignToHTMLImageElement(this.$refs.video)
-
+        tick(t * this.videoLength * 1000)
         // if (frame++ % 3 === 0) {
           setTimeout(() => {
             this.time = t * this.videoLength

@@ -1,7 +1,7 @@
 <template>
   <div class="time-slider">
     <div class="toolbar">
-      <button @click="updateValue(0)">
+      <button @click="updateValue(-0.01)">
         <icon name="skip_previous"/>
       </button>
       <button v-if="playing" @click="stop">
@@ -18,9 +18,9 @@
     </div>
     <vue-slider
       :width="numWidth"
-      :duration="0.1"
+      :duration="0"
       tooltip="none"
-      :value="value"
+      :value="sliderValue"
       :max="videoLength"
       @change="updateValue"
     />
@@ -30,6 +30,8 @@
 <script>
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
+
+import { tick } from '@/sync'
 
 export default {
   components: { VueSlider },
@@ -44,6 +46,9 @@ export default {
     }
   },
   computed: {
+    sliderValue () {
+      return Math.max(0, this.value)
+    },
     prettyTime () {
       return this.value.toFixed(1)
     },
@@ -73,20 +78,28 @@ export default {
       this.$emit('input', value)
     },
     stop () {
-      if (this.timer) {
-        clearInterval(this.timer)
-        this.timer = null
-      }
       this.playing = false
     },
     start () {
-      this.timer = setInterval(() => {
-        this.updateValue(Math.min(this.value + 0.05, this.videoLength))
-        if (this.value >= this.videoLength) {
-          this.stop()
-        }
-      }, 50)
+      if (this.playing) {
+        return
+      }
       this.playing = true
+      const updateTreshold = 0.05
+      const playbackStart = performance.now()
+      const startTime = this.value
+      const loop = currentTime => {
+        const delta = Math.max(0, currentTime - playbackStart)
+        const t = startTime + delta / 1000
+        tick(t * 1000)
+        if (Math.abs(t - this.value) > updateTreshold) {
+          this.updateValue(t)
+        }
+        if (this.playing) {
+          requestAnimationFrame(loop)
+        }
+      }
+      requestAnimationFrame(loop)
     }
   }
 }

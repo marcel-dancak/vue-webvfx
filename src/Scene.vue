@@ -12,10 +12,11 @@
 <script>
 import anime from 'animejs/lib/anime.es.js'
 import Logo from '@/assets/inline-svg/awesome_logo.svg'
+import { sync } from '@/sync'
 
 const AwesomeLogo = {
   mounted () {
-    anime.timeline({})
+    sync(anime.timeline)({})
       .add({
         targets: this.$el,
         opacity: 1,
