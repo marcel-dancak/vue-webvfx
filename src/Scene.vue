@@ -1,7 +1,5 @@
 <template>
   <div class="scene">
-    <!-- <img ref="video" class="video"/> -->
-
     <awesome-logo
       v-if="time > 1"
       class="logo"
