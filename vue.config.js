@@ -1,9 +1,15 @@
 module.exports = {
   lintOnSave: 'warning',
   publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
-  // assetsDir: 'static',
 
   chainWebpack: config => {
+
+    // Do not copy files from 'video' folder during build
+    config.plugin('copy').tap(([options]) => {
+      options[0].ignore.push('video/**/*')
+      return [options]
+    })
+
     const svgRule = config.module.rule('svg')
     svgRule.uses.clear()
 

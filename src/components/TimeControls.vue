@@ -1,7 +1,7 @@
 <template>
   <div class="time-slider">
     <div class="toolbar">
-      <button @click="updateValue(-0.01)">
+      <button @click="updateTime(-0.01)">
         <icon name="skip_previous"/>
       </button>
       <button v-if="playing" @click="stop">
@@ -10,7 +10,7 @@
       <button v-else @click="start">
         <icon name="play_circle_filled"/>
       </button>
-      <button @click="updateValue(videoLength)">
+      <button @click="updateTime(videoLength)">
         <icon name="skip_next"/>
       </button>
       <div class="spacer"/>
@@ -22,7 +22,7 @@
       tooltip="none"
       :value="sliderValue"
       :max="videoLength"
-      @change="updateValue"
+      @change="updateTime"
     />
   </div>
 </template>
@@ -36,21 +36,17 @@ import { tick } from '@/sync'
 export default {
   components: { VueSlider },
   props: {
-    value: Number,
+    time: Number,
     videoLength: Number,
-    width: [Number, String]
-  },
-  data () {
-    return {
-      playing: false
-    }
+    width: [Number, String],
+    playing: Boolean
   },
   computed: {
     sliderValue () {
-      return Math.max(0, this.value)
+      return Math.max(0, this.time)
     },
     prettyTime () {
-      return this.value.toFixed(1)
+      return this.time.toFixed(1)
     },
     numWidth () {
       return parseInt(this.width)
@@ -59,11 +55,11 @@ export default {
   mounted () {
     document.addEventListener('keydown', e => {
       if (e.code === 'Home') {
-        this.updateValue(0)
+        this.updateTime(0)
       } else if (e.code === 'ArrowLeft') {
-        this.updateValue(Math.max(0, this.value - 2))
+        this.updateTime(Math.max(0, this.time - 2))
       } else if (e.code === 'ArrowRight') {
-        this.updateValue(Math.min(this.videoLength, this.value + 2))
+        this.updateTime(Math.min(this.videoLength, this.time + 2))
       } else if (e.code === 'Space') {
         if (this.playing) {
           this.stop()
@@ -74,26 +70,27 @@ export default {
     })
   },
   methods: {
-    updateValue (value) {
-      this.$emit('input', value)
+    updateTime (value) {
+      this.$emit('update:time', value)
     },
     stop () {
-      this.playing = false
+      this.$emit('update:playing', false)
     },
     start () {
       if (this.playing) {
         return
       }
-      this.playing = true
+      this.$emit('update:playing', true)
+
       const updateTreshold = 0.05
       const playbackStart = performance.now()
-      const startTime = this.value
+      const startTime = this.time
       const loop = currentTime => {
         const delta = Math.max(0, currentTime - playbackStart)
         const t = startTime + delta / 1000
         tick(t * 1000)
-        if (Math.abs(t - this.value) > updateTreshold) {
-          this.updateValue(t)
+        if (Math.abs(t - this.time) > updateTreshold) {
+          this.updateTime(t)
         }
         if (this.playing) {
           requestAnimationFrame(loop)
