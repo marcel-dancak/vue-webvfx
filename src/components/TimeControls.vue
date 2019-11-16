@@ -14,7 +14,7 @@
         <icon name="skip_next"/>
       </button>
       <div class="spacer"/>
-      <label class="time">{{ prettyTime }} <small>/ {{ videoLength }}</small></label>
+      <label class="time">{{ time | timeformat }} <small>/ {{ videoLength | timeformat }}</small></label>
     </div>
     <vue-slider
       :width="numWidth"
@@ -45,11 +45,16 @@ export default {
     sliderValue () {
       return Math.max(0, this.time)
     },
-    prettyTime () {
-      return this.time.toFixed(1)
-    },
     numWidth () {
       return parseInt(this.width)
+    }
+  },
+  filters: {
+    timeformat: value => {
+      if (!value) return ''
+      const minute = parseInt(value / 60)
+      const second = Math.round(value - minute * 60)
+      return `${minute}:${second.toString().padStart(2, '0')}`
     }
   },
   mounted () {
