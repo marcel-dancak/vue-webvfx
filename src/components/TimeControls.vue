@@ -93,6 +93,10 @@ export default {
       const loop = currentTime => {
         const delta = Math.max(0, currentTime - playbackStart)
         const t = startTime + delta / 1000
+        if (t >= this.videoLength) {
+          this.stop()
+          return
+        }
         tick(t * 1000)
         if (Math.abs(t - this.time) > updateTreshold) {
           this.updateTime(t)
