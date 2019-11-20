@@ -25,7 +25,15 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import TimeControls from '@/components/TimeControls'
+
+export const PlaybackVideo = {
+  render (h) {
+    return h('img')
+  }
+}
+Vue.component('playback-video', PlaybackVideo)
 
 export default {
   name: 'app',

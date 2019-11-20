@@ -1,12 +1,27 @@
 <template>
   <div id="app">
-    <!-- <img ref="video" class="video"/> -->
     <slot :time="time"/>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import { tick } from './anime.js'
+
+const videoElems = []
+
+export const PlaybackVideo = {
+  mounted () {
+    videoElems.push(this.$el)
+  },
+  beforeDestroy () {
+    videoElems.splice(videoElems.indexOf(this.$el), 1)
+  },
+  render (h) {
+    return h('img')
+  }
+}
+Vue.component('playback-video', PlaybackVideo)
 
 export default {
   name: 'app',
@@ -20,7 +35,9 @@ export default {
     const webvfx = window.webvfx
     // let frame = 0
     webvfx.renderRequested.connect(t => {
-      // webvfx.getImage('video').assignToHTMLImageElement(this.$refs.video)
+      videoElems.forEach(el => {
+        webvfx.getImage('video').assignToHTMLImageElement(el)
+      })
       tick(t * this.videoLength * 1000)
       // if (frame++ % 3 === 0) {
         setTimeout(() => {
