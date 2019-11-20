@@ -6,8 +6,7 @@
 </template>
 
 <script>
-
-import { tick } from './sync'
+import { tick } from './anime.js'
 
 export default {
   name: 'app',

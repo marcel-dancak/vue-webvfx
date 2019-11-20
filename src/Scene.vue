@@ -8,13 +8,12 @@
 </template>
 
 <script>
-import anime from 'animejs/lib/anime.es.js'
 import Logo from '@/assets/inline-svg/awesome_logo.svg'
-import { sync } from '@/sync'
+import anime from '@/anime.js'
 
 const AwesomeLogo = {
   mounted () {
-    sync(anime.timeline)({})
+    anime.timeline({})
       .add({
         targets: this.$el,
         opacity: 1,

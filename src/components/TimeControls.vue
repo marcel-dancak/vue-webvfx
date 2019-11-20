@@ -31,7 +31,7 @@
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
 
-import { tick } from '@/sync'
+import { tick } from '@/anime.js'
 
 export default {
   components: { VueSlider },
