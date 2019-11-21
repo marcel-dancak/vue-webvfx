@@ -62,7 +62,7 @@ export default {
       }
     },
     time (time) {
-      if (!this.playing) {
+      if (!this.playing && this.$refs.video) {
         this.$refs.video.currentTime = time
       }
     }
